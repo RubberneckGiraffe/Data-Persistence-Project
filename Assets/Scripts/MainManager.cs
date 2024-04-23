@@ -1,8 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class MainManager : MonoBehaviour
 {
@@ -11,15 +13,14 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
 
     public Text ScoreText;
+    public Text HighScoreText;
     public GameObject GameOverText;
     
     private bool m_Started = false;
     private int m_Points;
     
     private bool m_GameOver = false;
-
     
-    // Start is called before the first frame update
     void Start()
     {
         const float step = 0.6f;
@@ -36,6 +37,8 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+        
+        LoadHighScore();
     }
 
     private void Update()
@@ -71,6 +74,23 @@ public class MainManager : MonoBehaviour
     public void GameOver()
     {
         m_GameOver = true;
+        ValidateHighScore(m_Points);
+        SystemManager.Instance.SavePlayerData();
         GameOverText.SetActive(true);
+    }
+
+    int ValidateHighScore(int score)
+    {
+        score = m_Points;
+        if (SystemManager.Instance.HighScore < m_Points)
+        {
+            SystemManager.Instance.HighScore = m_Points;
+        }
+        return m_Points;
+    }
+
+    void LoadHighScore()
+    {
+        HighScoreText.text = $"High Score: {SystemManager.Instance.HighScore}";
     }
 }
