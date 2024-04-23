@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
+using UnityEditor;
 
 public class MainManager : MonoBehaviour
 {
@@ -15,12 +16,18 @@ public class MainManager : MonoBehaviour
     public Text ScoreText;
     public Text HighScoreText;
     public GameObject GameOverText;
+    public GameObject ExitButton;
     
     private bool m_Started = false;
     private int m_Points;
     
     private bool m_GameOver = false;
-    
+
+    void Awake()
+    {
+        LoadHighScore();
+    }
+
     void Start()
     {
         const float step = 0.6f;
@@ -37,8 +44,6 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
-        
-        LoadHighScore();
     }
 
     private void Update()
@@ -77,6 +82,7 @@ public class MainManager : MonoBehaviour
         ValidateHighScore(m_Points);
         SystemManager.Instance.SavePlayerData();
         GameOverText.SetActive(true);
+        ExitButton.SetActive(true);
     }
 
     int ValidateHighScore(int score)
@@ -91,6 +97,16 @@ public class MainManager : MonoBehaviour
 
     void LoadHighScore()
     {
-        HighScoreText.text = $"High Score: {SystemManager.Instance.HighScore}";
+        HighScoreText.text = $"High Score: {SystemManager.Instance.HighScore} Player: {SystemManager.Instance.PlayerName}";
+    }
+    
+    public void Exit()
+    {
+        SystemManager.Instance.SavePlayerData();
+    #if UNITY_EDITOR
+        EditorApplication.ExitPlaymode();
+    #else
+        Application.Quit();
+    #endif
     }
 }

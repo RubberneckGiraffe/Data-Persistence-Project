@@ -1,34 +1,23 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class MenuUIHandler : MonoBehaviour
 {
-    public void StartGame()
-    {
-        SceneManager.LoadScene(1);
-    }
+    public TMP_InputField input;
 
-    public void Exit()
-    {
-        SystemManager.Instance.SavePlayerData();
-    #if UNITY_EDITOR
-        EditorApplication.ExitPlaymode();
-    #else
-        Application.Quit();
-    #endif
-    }
-
-    public void SaveEnteredName()
-    {
-        SystemManager.Instance.SavePlayerData();
-    }
-
-    public void LoadEnteredName()
+    void Awake()
     {
         SystemManager.Instance.LoadPlayerData();
     }
-   
+
+    public void StartGame()
+    {
+        SystemManager.Instance.PlayerName = input.text;
+        SceneManager.LoadScene(1);
+    }
 }
